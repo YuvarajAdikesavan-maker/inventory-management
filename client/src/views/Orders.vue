@@ -75,6 +75,44 @@
         </div>
       </div>
     </div>
+
+    <div class="card submitted-card">
+      <div class="card-header">
+        <h3 class="card-title">{{ t('orders.submitted.title') }} ({{ restockOrders.length }})</h3>
+      </div>
+      <div v-if="restockError" class="submitted-error">{{ restockError }}</div>
+      <div class="table-container">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th class="col-order-number">{{ t('orders.table.orderNumber') }}</th>
+              <th class="col-submitted-items">{{ t('orders.table.items') }}</th>
+              <th class="col-value">{{ t('orders.submitted.totalCost') }}</th>
+              <th class="col-date">{{ t('orders.submitted.submittedDate') }}</th>
+              <th class="col-lead">{{ t('orders.submitted.leadTime') }}</th>
+              <th class="col-date">{{ t('orders.table.expectedDelivery') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-if="restockOrders.length === 0">
+              <td colspan="6" class="submitted-empty">{{ t('orders.submitted.empty') }}</td>
+            </tr>
+            <tr v-for="order in restockOrders" :key="order.id">
+              <td class="col-order-number"><strong>{{ order.order_number }}</strong></td>
+              <td class="col-submitted-items">
+                <div v-for="item in order.items" :key="item.sku" class="item-entry-inline">
+                  {{ translateProductName(item.name) }} x {{ item.quantity }}
+                </div>
+              </td>
+              <td class="col-value"><strong>{{ currencySymbol }}{{ order.total_cost.toLocaleString() }}</strong></td>
+              <td class="col-date">{{ formatDate(order.submitted_date) }}</td>
+              <td class="col-lead">{{ t('orders.submitted.days', { count: order.lead_time_days }) }}</td>
+              <td class="col-date">{{ formatDate(order.expected_delivery) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -95,6 +133,9 @@ export default {
     const loading = ref(true)
     const error = ref(null)
     const orders = ref([])
+    // Submitted restock orders load independently of the filter bar and the main orders view
+    const restockOrders = ref([])
+    const restockError = ref(null)
 
     // Use shared filters
     const {
@@ -108,6 +149,7 @@ export default {
     const loadOrders = async () => {
       try {
         loading.value = true
+        error.value = null
         const filters = getCurrentFilters()
         const fetchedOrders = await api.getOrders(filters)
 
@@ -121,6 +163,16 @@ export default {
         error.value = 'Failed to load orders: ' + err.message
       } finally {
         loading.value = false
+      }
+    }
+
+    const loadRestockOrders = async () => {
+      try {
+        restockError.value = null
+        restockOrders.value = await api.getRestockOrders()
+      } catch (err) {
+        restockError.value = t('orders.submitted.loadError')
+        console.error('Failed to load restock orders:', err)
       }
     }
 
@@ -146,20 +198,30 @@ export default {
     const formatDate = (dateString) => {
       const { currentLocale } = useI18n()
       const locale = currentLocale.value === 'ja' ? 'ja-JP' : 'en-US'
-      return new Date(dateString).toLocaleDateString(locale, {
+      // Date-only strings (YYYY-MM-DD, used by restock orders) parse as UTC midnight, which
+      // displays a day early in timezones behind UTC, so force them to be read as local dates
+      const isDateOnly = /^\d{4}-\d{2}-\d{2}$/.test(dateString || '')
+      const date = new Date(isDateOnly ? `${dateString}T00:00:00` : dateString)
+      if (isNaN(date.getTime())) return dateString || '-'
+      return date.toLocaleDateString(locale, {
         year: 'numeric',
         month: 'short',
         day: 'numeric'
       })
     }
 
-    onMounted(loadOrders)
+    onMounted(() => {
+      loadOrders()
+      loadRestockOrders()
+    })
 
     return {
       t,
       loading,
       error,
       orders,
+      restockOrders,
+      restockError,
       getOrdersByStatus,
       getOrderStatusClass,
       formatDate,
@@ -201,6 +263,35 @@ export default {
 
 .col-value {
   width: 120px;
+}
+
+.col-submitted-items {
+  width: 280px;
+}
+
+.col-lead {
+  width: 110px;
+}
+
+.submitted-card {
+  margin-top: 1.5rem;
+}
+
+.item-entry-inline {
+  font-size: 0.875rem;
+  color: #0f172a;
+}
+
+.submitted-empty {
+  text-align: center;
+  color: #64748b;
+  padding: 1.5rem;
+}
+
+.submitted-error {
+  color: #991b1b;
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
 }
 
 /* Items details styling */
