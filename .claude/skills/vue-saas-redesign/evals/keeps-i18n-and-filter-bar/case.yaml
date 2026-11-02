@@ -1,0 +1,8 @@
+schema_version: "1.1"
+name: keeps-i18n-and-filter-bar
+expected_outcome: |
+  The navigation moves into a left sidebar with the translated labels still driven by the
+  i18n helper, the language switcher and the shared warehouse filter bar remain functional
+  and are relocated sensibly, and any new visible text is translated in both locales.
+context:
+  scaffold_script: place-files.sh

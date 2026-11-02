@@ -1,0 +1,69 @@
+/*
+ * Design tokens for the SaaS redesign.
+ * Adapt color values to the app's existing palette; keep the roles and the scales.
+ * Import once (e.g. in main.js) or paste into the app's global stylesheet.
+ */
+:root {
+  /* Spacing: 4px base scale. Every gap, padding and margin should come from here. */
+  --space-1: 0.25rem;  /* 4px  */
+  --space-2: 0.5rem;   /* 8px  */
+  --space-3: 0.75rem;  /* 12px */
+  --space-4: 1rem;     /* 16px */
+  --space-5: 1.25rem;  /* 20px */
+  --space-6: 1.5rem;   /* 24px */
+  --space-8: 2rem;     /* 32px */
+  --space-10: 2.5rem;  /* 40px */
+  --space-12: 3rem;    /* 48px */
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --text-xs: 0.75rem;    /* captions, badges */
+  --text-sm: 0.875rem;   /* table cells, secondary text, nav items */
+  --text-base: 0.9375rem; /* body */
+  --text-lg: 1.125rem;   /* card titles */
+  --text-xl: 1.375rem;   /* section titles */
+  --text-2xl: 1.75rem;   /* page titles */
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+
+  /* Color roles: neutral surfaces, one accent, color reserved for meaning */
+  --color-bg: #f8fafc;            /* page background */
+  --color-surface: #ffffff;       /* cards, sidebar, top bar */
+  --color-surface-muted: #f1f5f9; /* hover fills, table headers */
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+  --color-text: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-accent-soft: #eff6ff;   /* active nav item, selected rows */
+  --color-success: #16a34a;
+  --color-success-soft: #f0fdf4;
+  --color-warning: #d97706;
+  --color-warning-soft: #fffbeb;
+  --color-danger: #dc2626;
+  --color-danger-soft: #fef2f2;
+  --color-info: #2563eb;
+  --color-info-soft: #eff6ff;
+
+  /* Shape and depth */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.25);
+
+  /* Layout */
+  --sidebar-width: 15rem;           /* 240px */
+  --sidebar-width-collapsed: 4.5rem; /* 72px */
+  --topbar-height: 3.5rem;          /* 56px */
+  --content-max-width: 90rem;       /* 1440px */
+  --z-sidebar: 40;
+  --z-backdrop: 39;
+  --z-topbar: 30;
+
+  /* Motion */
+  --transition-fast: 150ms ease;
+}

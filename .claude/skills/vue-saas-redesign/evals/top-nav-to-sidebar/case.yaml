@@ -1,0 +1,9 @@
+schema_version: "1.1"
+name: top-nav-to-sidebar
+expected_outcome: |
+  The top navigation bar is replaced by a collapsible left sidebar (drawer on mobile),
+  shared design tokens and a consistent spacing scale are introduced and used by the shared
+  styles, all four routes and the user menu still work, no dependencies are added, and the
+  project builds.
+context:
+  scaffold_script: place-files.sh
